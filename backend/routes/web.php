@@ -31,6 +31,9 @@ $router->get('users', function() {
     return response()->json($users);
 });
 
+
+$router->get('users/{id}', 'UserController@view');
+
 $router->group(
     ['middleware' => 'jwt.auth'],
     function() use ($router) {
@@ -40,3 +43,4 @@ $router->group(
         });
     }
 );
+
