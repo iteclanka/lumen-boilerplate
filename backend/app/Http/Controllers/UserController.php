@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -105,7 +106,7 @@ class UserController extends Controller
      */
     public function view($id)
     {
-        if ($user = User::where('id','=',$id)->first()){
+        if ($user = User::where('id','=',$id)->with('role')->first()){
 //            $roles = Role::all()->pluck('name','id');
             return response()->json([
                 'data' => $user
@@ -125,32 +126,33 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-//        $roleCount = count(Role::all());
-//        $user = User::where('id','=',$id)->first();
-//        $this->validate($request,[
-//            'user_name'=>'required|min:6|unique:users,id,'.$user->id,
-//            'email'=>'required|email|unique:users,id,'.$user->id,
-//            'role_id'=>'required|integer|between:1,'.$roleCount.'',
-//            'is_active'=>'required|integer|between:1,2',
-//            'password'=>'nullable|min:6|confirmed'
-//        ]);
-//
-//        if ($user = User::where('id','=',$id)->first()){
-//
-//            $user->user_name = $request->user_name;
-//            $user->email = $request->email;
-//            $user->role_id = $request->role_id;
-//            $user->is_active = $request->is_active;
-//
-//            if($request->password != ''){
-//                $user->password = bcrypt($request->password);
-//            }
-//
-//            $user->update();
-//
-//            return redirect()->back()->with(['success'=>'User details updated successfully !']);
-//
-//        }
+        $roleCount = count(Role::all());
+        $user = User::where('id','=',$id)->first();
+        $this->validate($request,[
+            'name'=>'required|min:6|unique:users,id,'.$user->id,
+            'email'=>'required|email|unique:users,id,'.$user->id,
+            'role_id'=>'required|integer|between:1,'.$roleCount.'',
+            'is_active'=>'required|integer|between:0,1',
+            'password'=>'nullable|min:6|confirmed'
+        ]);
+
+        if ($user = User::where('id','=',$id)->first()){
+
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->role_id = $request->role_id;
+            $user->is_active = $request->is_active;
+
+            if($this->request->input('password')){
+                $user->password = bcrypt($request->password);
+            }
+
+            $user->update();
+
+            $users = User::with('role')->get();
+            return response()->json($users);
+
+        }
     }
 
     /**

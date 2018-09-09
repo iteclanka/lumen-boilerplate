@@ -27,12 +27,18 @@ $router->post(
 );
 
 $router->get('users', function() {
-    $users = \App\User::all();
+    $users = \App\User::with('role')->get();
     return response()->json($users);
+});
+
+$router->get('roles', function() {
+    $roles = \App\Models\Role::all();
+    return response()->json(['data' => $roles], 200);
 });
 
 
 $router->get('users/{id}', 'UserController@view');
+$router->put('users/{id}', 'UserController@update');
 
 $router->group(
     ['middleware' => 'jwt.auth'],
