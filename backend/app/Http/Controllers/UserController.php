@@ -55,36 +55,32 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-//        $roleCount = count(Role::all());
+        $roleCount = count(Role::all());
+
+        $this->validate($request,[
+            'name'=>'required|min:6|unique:users',
+            'email'=>'required|email|unique:users',
+            'role_id'=>'required|integer|between:1,'.$roleCount.'',
+            'is_active'=>'required|integer|between:0,1',
+            'password'=>'required|min:6|confirmed'
+        ]);
 //
-//        $this->validate($request,[
-//            'user_name'=>'required|min:6|unique:users',
-//            'email'=>'required|email|unique:users',
-//            'role_id'=>'required|integer|between:1,'.$roleCount.'',
-//            'is_active'=>'required|integer|between:1,2',
-//            'password'=>'required|min:6|confirmed'
-//        ]);
-//
-//        if ($request->id !='' && $employee = Employee::where('id','=',$request->id)->first()){
-//
-//            if ($employee->users_id == null){
-//                $user = new User;
-//                $user->user_name = $request->user_name;
-//                $user->email = $request->email;
-//                $user->role_id = $request->role_id;
-//                $user->is_active = $request->is_active;
-//
-//                $user->password = bcrypt($request->password);
-//                $user->save();
-//                $employee->users_id = $user->id;
-//                $employee->update();
-//
-//                return redirect()->back()->with(['success'=>'New user created successfully !']);
-//            }
-//            return redirect('home');
-//        }
-//
-//        return redirect('home');
+        $user = new User;
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->role_id = $request->role_id;
+        $user->is_active = $request->is_active;
+
+        $user->password = password_hash($request->password, PASSWORD_BCRYPT);
+        $user->save();
+
+        $users = User::with('role')->get();
+        return response()->json([
+            'success'=>true,
+            'message'=>'User created Successfully',
+            'users'=>$users
+            ]);
+
     }
 
     /**
