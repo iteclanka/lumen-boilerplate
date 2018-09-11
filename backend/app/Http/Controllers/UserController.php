@@ -146,7 +146,11 @@ class UserController extends Controller
             $user->update();
 
             $users = User::with('role')->get();
-            return response()->json($users);
+            return response()->json([
+                'success'=>true,
+                'message'=>'User updated Successfully',
+                'users'=>$users
+            ]);
 
         }
     }
