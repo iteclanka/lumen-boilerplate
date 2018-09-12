@@ -73,13 +73,8 @@ class UserController extends Controller
 
         $user->password = password_hash($request->password, PASSWORD_BCRYPT);
         $user->save();
-
-        $users = User::with('role')->get();
-        return response()->json([
-            'success'=>true,
-            'message'=>'User created Successfully',
-            'users'=>$users
-            ]);
+        
+        return response()->json($user, 201);
 
     }
 

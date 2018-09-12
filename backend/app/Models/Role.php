@@ -8,7 +8,7 @@
 namespace App\Models;
 
 use Illuminate\Support\Facades\DB;
-use Reliese\Database\Eloquent\Model as Eloquent;
+use Illuminate\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class Role
