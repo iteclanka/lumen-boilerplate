@@ -99,9 +99,7 @@ class UserController extends Controller
     {
         if ($user = User::where('id','=',$id)->with('role')->first()){
 //            $roles = Role::all()->pluck('name','id');
-            return response()->json([
-                'data' => $user
-            ], 200);
+            return response()->json($user, 200);
         }
         return response()->json([
             'data' => 'User Not Found'
@@ -140,12 +138,7 @@ class UserController extends Controller
 
             $user->update();
 
-            $users = User::with('role')->get();
-            return response()->json([
-                'success'=>true,
-                'message'=>'User updated Successfully',
-                'users'=>$users
-            ]);
+            return response()->json($user,200);
 
         }
     }

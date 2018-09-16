@@ -28,11 +28,7 @@ $router->post(
 
 $router->get('users', function() {
     $users = \App\User::with('role')->get();
-    return response()->json([
-        'success'=>true,
-        'message'=>'',
-        'users'=>$users
-    ]);
+    return response()->json($users,200);
 });
 
 $router->get('roles', function() {
